@@ -1,0 +1,22 @@
+import os
+from dotenv import load_dotenv
+from sqlalchemy import URL
+
+load_dotenv()
+
+class Config:
+
+    TWILIO_ACCOUNT_SID = os.getenv("TWILIO_ACCOUNT_SID")
+    TWILIO_AUTH_TOKEN = os.getenv("TWILIO_AUTH_TOKEN")
+    TWILIO_WHATSAPP_NUMBER = os.getenv("TWILIO_WHATSAPP_NUMBER")
+
+    SQLALCHEMY_DATABASE_URI = URL.create(
+        drivername=os.getenv("DB_DRIVER"),
+        username=os.getenv("DB_USERNAME"),
+        password=os.getenv("DB_PASSWORD"),
+        host=os.getenv("DB_HOST"),
+        port=int(os.getenv("DB_PORT")),
+        database=os.getenv("DB_NAME"),
+    )
+
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
