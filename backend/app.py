@@ -7,6 +7,7 @@ from models import Agent, Lead, Message
 from routing import assign_agent
 from twilio.rest import Client
 from config import Config
+from ai import classify_reply
 
 app = Flask(__name__)
 twilio_client = Client(Config.TWILIO_ACCOUNT_SID, Config.TWILIO_AUTH_TOKEN)
@@ -74,12 +75,23 @@ def whatsapp_webhook():
             lead.current_step = "done"
             assign_agent(lead)
         else:
-            reply_text = "Please reply with 1 or 2.\n1. Buying a product\n2. Getting support"
-            bot_msg = Message(body=reply_text, lead_id=lead.id, sender="bot")
-            db.session.add(bot_msg)
-            db.session.commit()
-            resp.message(reply_text)
-            return str(resp)
+            classified = classify_reply("awaiting_interest", incoming_body)
+            if classified == "product":
+                lead.interest = "product"
+                reply_text = "What's your budget?\n1. Under $1,000\n2. $1,000-$5,000\n3. $5,000+"
+                lead.current_step = "awaiting_budget"
+            elif classified == "support":
+                lead.interest = "support"
+                reply_text = "Got it, connecting you with support. Someone will reach out shortly."
+                lead.current_step = "done"
+                assign_agent(lead)
+            else:
+                reply_text = "Please reply with 1 or 2.\n1. Buying a product\n2. Getting support"
+                bot_msg = Message(body=reply_text, lead_id=lead.id, sender="bot")
+                db.session.add(bot_msg)
+                db.session.commit()
+                resp.message(reply_text)
+                return str(resp)
 
     elif lead.current_step == "awaiting_budget":
         if incoming_body == "1":
@@ -89,12 +101,20 @@ def whatsapp_webhook():
         elif incoming_body == "3":
             lead.budget = "5k_plus"
         else:
-            reply_text = "Please reply with 1, 2, or 3.\n1. Under $1,000\n2. $1,000-$5,000\n3. $5,000+"
-            bot_msg = Message(body=reply_text, lead_id=lead.id, sender="bot")
-            db.session.add(bot_msg)
-            db.session.commit()
-            resp.message(reply_text)
-            return str(resp)
+            classified = classify_reply("awaiting_budget", incoming_body)
+            if classified == "under_1k":
+                lead.budget = "under_1k"
+            elif classified == "1k_5k":
+                lead.budget = "1k_5k"
+            elif classified == "5k_plus":
+                lead.budget = "5k_plus"
+            else:
+                reply_text = "Please reply with 1, 2, or 3.\n1. Under $1,000\n2. $1,000-$5,000\n3. $5,000+"
+                bot_msg = Message(body=reply_text, lead_id=lead.id, sender="bot")
+                db.session.add(bot_msg)
+                db.session.commit()
+                resp.message(reply_text)
+                return str(resp)
         
         reply_text = "How soon are you looking to move forward?\n1. ASAP\n2. This month\n3. Just exploring"
         lead.current_step = "awaiting_urgency"
@@ -107,12 +127,20 @@ def whatsapp_webhook():
         elif incoming_body == "3":
             lead.urgency = "exploring"
         else:
-            reply_text = "Please reply with 1, 2, or 3.\n1. ASAP\n2. This month\n3. Just exploring"
-            bot_msg = Message(body=reply_text, lead_id=lead.id, sender="bot")
-            db.session.add(bot_msg)
-            db.session.commit()
-            resp.message(reply_text)
-            return str(resp)
+            classified = classify_reply("awaiting_urgency", incoming_body)
+            if classified == "asap":
+                lead.urgency = "asap"
+            elif classified == "this_month":
+                lead.urgency = "this_month"
+            elif classified == "exploring":
+                lead.urgency = "exploring"
+            else:
+                reply_text = "Please reply with 1, 2, or 3.\n1. ASAP\n2. This month\n3. Just exploring"
+                bot_msg = Message(body=reply_text, lead_id=lead.id, sender="bot")
+                db.session.add(bot_msg)
+                db.session.commit()
+                resp.message(reply_text)
+                return str(resp)
 
         reply_text = "Thanks! You're all set — someone from our team will reach out shortly."
         lead.current_step = "done"
