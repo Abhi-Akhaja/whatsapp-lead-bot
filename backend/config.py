@@ -12,12 +12,21 @@ class Config:
 
     SQLALCHEMY_DATABASE_URI = URL.create(
         drivername=os.getenv("DB_DRIVER"),
-        username=os.getenv("DB_USERNAME"),
+        username=os.getenv("DB_USER"),
         password=os.getenv("DB_PASSWORD"),
         host=os.getenv("DB_HOST"),
         port=int(os.getenv("DB_PORT")),
         database=os.getenv("DB_NAME"),
     )
+
+    DB_SSL_CA_PATH = os.path.join(os.path.dirname(__file__), "ca.pem")           # Works regardless of run from any directory (returns "that folder + ca.pem")
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        "connect_args": {
+            "ssl": {
+                "ca": DB_SSL_CA_PATH
+            }
+        }
+    }
 
     SQLALCHEMY_TRACK_MODIFICATIONS = False
 
