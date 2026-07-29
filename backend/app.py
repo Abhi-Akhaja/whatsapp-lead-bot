@@ -14,7 +14,7 @@ twilio_client = Client(Config.TWILIO_ACCOUNT_SID, Config.TWILIO_AUTH_TOKEN)
 app.config.from_object(Config)
 
 db.init_app(app)
-CORS(app, origins=["http://localhost:5173"])
+CORS(app)
 
 with app.app_context():
     db.create_all()

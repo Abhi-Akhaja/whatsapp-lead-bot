@@ -10,7 +10,7 @@ function App() {
 
     useEffect(() => {
         const fetchLeads = () => {
-            fetch("http://localhost:5000/api/leads")
+            fetch(`${import.meta.env.VITE_API_URL}/api/leads`)
                 .then((res) => res.json())
                 .then((data) => setLeads(data));
         };
@@ -30,7 +30,7 @@ function App() {
         if (!selectedLead) return;
 
         const fetchMessages = () => {
-            fetch(`http://localhost:5000/api/leads/${selectedLead}/messages`)
+            fetch(`${import.meta.env.VITE_API_URL}/api/leads/${selectedLead}/messages`)
                 .then((res) => res.json())
                 .then((data) => setMessages(data));
         };
@@ -44,7 +44,7 @@ function App() {
 
     const handleSend = () => {
         if (!draft.trim()) return;
-        fetch(`http://localhost:5000/api/leads/${selectedLead}/message`, {
+        fetch(`${import.meta.env.VITE_API_URL}/api/leads/${selectedLead}/message`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ body: draft }),
