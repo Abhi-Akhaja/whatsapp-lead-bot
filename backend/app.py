@@ -3,7 +3,7 @@ from config import Config
 from db import db
 from flask_cors import CORS
 from twilio.twiml.messaging_response import MessagingResponse
-from models import Agent, Lead, Message
+from models import Lead, Message
 from routing import assign_agent
 from twilio.rest import Client
 from config import Config
@@ -17,7 +17,7 @@ db.init_app(app)
 CORS(app)
 
 with app.app_context():
-    db.create_all()
+    db.create_all()                    # Create tables that not exists
 
 @app.route("/api/leads/<int:lead_id>/message", methods=["POST"])                          # for Browser messages
 def send_agent_message(lead_id):
