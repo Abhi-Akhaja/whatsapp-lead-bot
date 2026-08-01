@@ -2,7 +2,7 @@
 
 A WhatsApp bot that automatically qualifies inbound leads through a short
 question flow, routes them to the right team, and gives agents a live CRM
-dashboard to manage conversations — built end-to-end from scratch (Flask,
+dashboard to manage conversations - built end-to-end from scratch (Flask,
 MySQL, React, Twilio, Gemini AI) as a full-stack learning project.
 
 **Live dashboard:** https://wa-chatbot-crm.vercel.app
@@ -18,7 +18,7 @@ MySQL, React, Twilio, Gemini AI) as a full-stack learning project.
 2. Once qualified, the lead is automatically routed to the right team
    (sales / support / enterprise) and assigned to whichever agent on that
    team currently has the fewest active leads.
-3. Agents manage everything from a live-updating dashboard — viewing
+3. Agents manage everything from a live-updating dashboard - viewing
    conversations, seeing qualification data, and replying manually 
    (which pauses the bot for that conversation).
 
@@ -37,12 +37,12 @@ MySQL, React, Twilio, Gemini AI) as a full-stack learning project.
 The bot is connected to a live Twilio sandbox number. If you'd like to test
 it directly rather than just viewing the dashboard:
 
-1. Send `join <your-code>` to **+1 415 523 8886** from WhatsApp
+1. Send `Join organized-guess` to **+1 415 523 8886** from WhatsApp
 2. Message it anything to start the qualification flow
 3. Watch it appear live on the dashboard above within a few seconds
 
 Note: this is a Twilio *sandbox* number, not a production WhatsApp Business
-line — sessions expire after 3 days (you'd need to rejoin).
+line - sessions expire after 3 days (you'd need to rejoin).
 
 
 ## Architecture
