@@ -162,12 +162,14 @@ def get_leads():
         {
             "id": l.id,
             "phone_number": l.phone_number,
-            "name": l.name,
             "interest": l.interest,
             "budget": l.budget,
             "urgency": l.urgency,
             "current_step": l.current_step,
-            "assigned_agent": l.assigned_agent.name if l.assigned_agent else None,
+            "assigned_agent": {
+                "name": l.assigned_agent.name,
+                "team": l.assigned_agent.team,
+            } if l.assigned_agent else None,
         }
         for l in leads
     ])
@@ -180,6 +182,10 @@ def get_lead_messages(lead_id):
         for m in lead.messages
     ])
 
+# @app.route("/api/debug/agents", methods=["GET"])
+# def debug_agents():
+#     agents = Agent.query.all()
+#     return jsonify([{"id": a.id, "name": a.name, "team": a.team} for a in agents])
 
 if __name__ == "__main__":
     app.run(debug=True, port=5000)  
