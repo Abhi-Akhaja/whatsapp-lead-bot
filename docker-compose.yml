@@ -1,0 +1,36 @@
+services:
+  db:
+    image: mysql:8.4
+    environment:
+      MYSQL_ROOT_PASSWORD: localdevpassword
+      MYSQL_DATABASE: whatsapp_bot
+    ports:
+      - "3307:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    ports:  
+      - "5000:5000"
+    environment:
+      DB_DRIVER: mysql+pymysql
+      DB_HOST: db
+      DB_PORT: 3306
+      DB_USER: root
+      DB_PASSWORD: localdevpassword
+      DB_NAME: whatsapp_bot
+      DB_USE_SSL: "false"
+    env_file:
+      - ./backend/.env
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  mysql_data:

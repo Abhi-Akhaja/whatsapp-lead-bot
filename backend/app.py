@@ -8,6 +8,8 @@ from routing import assign_agent
 from twilio.rest import Client
 from config import Config
 from ai import classify_reply
+import time
+from sqlalchemy.exc import OperationalError
 
 app = Flask(__name__)
 twilio_client = Client(Config.TWILIO_ACCOUNT_SID, Config.TWILIO_AUTH_TOKEN)
@@ -16,8 +18,17 @@ app.config.from_object(Config)
 db.init_app(app)
 CORS(app)
 
+# Wait for MySQL to be ready before creating tables. without for loop, first time docker-compose build throws error, bcz backend tries to create tables while database is not ready yet.
 with app.app_context():
-    db.create_all()                    # Create tables that not exists
+    for attempt in range(10):
+        try:
+            db.create_all()                                               # Create tables that not exists
+            break
+        except OperationalError:
+            print(f"Database not ready, retrying... ({attempt + 1}/10)")
+            time.sleep(3)
+    else:
+        raise RuntimeError("Could not connect to the database after multiple retries.")        
 
 @app.route("/api/leads/<int:lead_id>/message", methods=["POST"])                          # for Browser messages
 def send_agent_message(lead_id):

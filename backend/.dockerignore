@@ -1,0 +1,24 @@
+# Virtual environment
+.venv/
+venv/
+
+# Python cache
+__pycache__/
+*.py[cod]
+
+# VS Code
+.vscode/
+
+# Environment variables / secrets
+.env
+
+# Git
+.git/
+.gitignore
+
+# Logs
+*.log
+
+# OS files
+.DS_Store
+Thumbs.db
